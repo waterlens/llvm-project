@@ -221,6 +221,7 @@ typedef enum {
   LLVMPreserveAllCallConv   = 15,
   LLVMSwiftCallConv         = 16,
   LLVMCXXFASTTLSCallConv    = 17,
+  LLVMQuicKamlCallConv      = 42,
   LLVMX86StdcallCallConv    = 64,
   LLVMX86FastcallCallConv   = 65,
   LLVMARMAPCSCallConv       = 66,

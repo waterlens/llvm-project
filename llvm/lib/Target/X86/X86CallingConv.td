@@ -743,6 +743,25 @@ def CC_X86_64_HiPE : CallingConv<[
   CCIfType<[i32, i64, f32, f64], CCAssignToStack<8, 8>>
 ]>;
 
+def CC_X86_64_QKCC : CallingConv<[
+  // Promote i8/i16/i32 arguments to i64.
+  CCIfType<[i8, i16], CCPromoteToType<i32>>,
+
+  CCIfType<[i32],
+            CCAssignToReg<[EBX, ECX, EDX, ESI, EDI, EBP, R12D, R13D, R14D, R8D, R9D, R15D, R10D, R11D]>>,
+  CCIfType<[i64],
+            CCAssignToReg<[RBX, RCX, RDX, RSI, RDI, RBP, R12, R13, R14, R8, R9, R15, R10, R11]>>,
+  CCIfType<[f32, f64, v16i8, v8i16, v4i32, v2i64, v4f32, v2f64],
+            CCIfSubtarget<"hasSSE1()",
+            CCAssignToReg<[XMM1, XMM2, XMM3, XMM4, XMM5, XMM6]>>>,
+  CCIfType<[v32i8, v16i16, v8i32, v4i64, v8f32, v4f64],
+            CCIfSubtarget<"hasAVX()",
+            CCAssignToReg<[YMM1, YMM2, YMM3, YMM4, YMM5, YMM6]>>>,
+  CCIfType<[v64i8, v32i16, v16i32, v8i64, v16f32, v8f64],
+            CCIfSubtarget<"hasAVX512()",
+            CCAssignToReg<[ZMM1, ZMM2, ZMM3, ZMM4, ZMM5, ZMM6]>>>
+]>;
+
 // No explicit register is specified for the AnyReg calling convention. The
 // register allocator may assign the arguments to any free register.
 //
@@ -1085,6 +1104,7 @@ def CC_X86_32 : CallingConv<[
 // This is the root argument convention for the X86-64 backend.
 def CC_X86_64 : CallingConv<[
   CCIfCC<"CallingConv::GHC", CCDelegateTo<CC_X86_64_GHC>>,
+  CCIfCC<"CallingConv::QuicKaml", CCDelegateTo<CC_X86_64_QKCC>>,
   CCIfCC<"CallingConv::HiPE", CCDelegateTo<CC_X86_64_HiPE>>,
   CCIfCC<"CallingConv::AnyReg", CCDelegateTo<CC_X86_64_AnyReg>>,
   CCIfCC<"CallingConv::Win64", CCDelegateTo<CC_X86_Win64_C>>,

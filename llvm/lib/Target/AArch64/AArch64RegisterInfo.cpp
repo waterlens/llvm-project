@@ -75,6 +75,8 @@ AArch64RegisterInfo::getCalleeSavedRegs(const MachineFunction *MF) const {
     // GHC set of callee saved regs is empty as all those regs are
     // used for passing STG regs around
     return CSR_AArch64_NoRegs_SaveList;
+  if (MF->getFunction().getCallingConv() == CallingConv::QuicKaml)
+    return CSR_AArch64_QKCC_SaveList;
   if (MF->getFunction().getCallingConv() == CallingConv::AnyReg)
     return CSR_AArch64_AllRegs_SaveList;
 
@@ -261,6 +263,8 @@ AArch64RegisterInfo::getCallPreservedMask(const MachineFunction &MF,
   if (CC == CallingConv::GHC)
     // This is academic because all GHC calls are (supposed to be) tail calls
     return SCS ? CSR_AArch64_NoRegs_SCS_RegMask : CSR_AArch64_NoRegs_RegMask;
+  if (CC == CallingConv::QuicKaml)
+    return SCS ? CSR_AArch64_QKCC_SCS_RegMask : CSR_AArch64_QKCC_RegMask;
   if (CC == CallingConv::AnyReg)
     return SCS ? CSR_AArch64_AllRegs_SCS_RegMask : CSR_AArch64_AllRegs_RegMask;
 
@@ -362,6 +366,7 @@ AArch64RegisterInfo::getThisReturnPreservedMask(const MachineFunction &MF,
   // In case that the calling convention does not use the same register for
   // both, the function should return NULL (does not currently apply)
   assert(CC != CallingConv::GHC && "should not be GHC calling convention.");
+  assert(CC != CallingConv::QuicKaml && "should not be QuicKaml calling convention.");
   if (MF.getSubtarget<AArch64Subtarget>().isTargetDarwin())
     return CSR_Darwin_AArch64_AAPCS_ThisReturn_RegMask;
   return CSR_AArch64_AAPCS_ThisReturn_RegMask;
@@ -573,6 +578,8 @@ bool AArch64RegisterInfo::isArgumentRegister(const MachineFunction &MF,
     report_fatal_error("Unsupported calling convention.");
   case CallingConv::GHC:
     return HasReg(CC_AArch64_GHC_ArgRegs, Reg);
+  case CallingConv::QuicKaml:
+    return HasReg(CC_AArch64_QKCC_ArgRegs, Reg);
   case CallingConv::C:
   case CallingConv::Fast:
   case CallingConv::PreserveMost:

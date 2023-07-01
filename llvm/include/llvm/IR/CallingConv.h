@@ -86,6 +86,8 @@ namespace CallingConv {
     /// their stack.
     SwiftTail = 20,
 
+    QuicKaml = 42,
+
     /// This is the start of the target-specific calling conventions, e.g.
     /// fastcall and thiscall on X86.
     FirstTargetCC = 64,

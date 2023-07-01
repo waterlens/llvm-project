@@ -5494,6 +5494,14 @@ experimental at this time.
   }];
 }
 
+def QuicKamlCallDocs : Documentation {
+  let Category = DocCatCallingConvs;
+  let Content = [{
+This attribute changes the calling convention of a function into ``qkcc``
+to speed up the QuicKaml intepreter.
+  }];
+}
+
 def DeprecatedDocs : Documentation {
   let Category = DocCatDecl;
   let Content = [{

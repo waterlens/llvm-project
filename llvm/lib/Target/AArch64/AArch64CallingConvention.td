@@ -368,6 +368,27 @@ def CC_AArch64_GHC : CallingConv<[
   CCIfType<[i64], CCAssignToReg<[X19, X20, X21, X22, X23, X24, X25, X26, X27, X28]>>
 ]>;
 
+let Entry = 1 in
+def CC_AArch64_QKCC : CallingConv<[
+  CCIfType<[iPTR], CCBitConvertToType<i64>>,
+
+  CCIfType<[v1i64, v2i32, v4i16, v8i8, v2f32], CCBitConvertToType<f64>>,
+  CCIfType<[v2i64, v4i32, v8i16, v16i8, v4f32, f128], CCBitConvertToType<v2f64>>,
+
+  CCIfType<[v2f64], CCAssignToReg<[Q4, Q5]>>,
+  CCIfType<[f32], CCAssignToReg<[S8, S9, S10, S11]>>,
+  CCIfType<[f64], CCAssignToReg<[D12, D13, D14, D15]>>,
+
+  CCIfType<[i8, i16], CCPromoteToType<i32>>,
+
+  CCIfType<[i32], CCAssignToReg<[W0, W1, W2, W3, W4, W5, W6, W7, W19, W20, W21, W22, W23, W24, W25, W26, W27, W28]>>,
+  CCIfType<[i64], CCAssignToReg<[X0, X1, X2, X3, X4, X5, X6, X7, X19, X20, X21, X22, X23, X24, X25, X26, X27, X28]>>
+]>;
+
+def CSR_AArch64_QKCC : CalleeSavedRegs<(add)>;
+def CSR_AArch64_QKCC_SCS
+    : CalleeSavedRegs<(add CSR_AArch64_QKCC)>;
+
 // The order of the callee-saves in this file is important, because the
 // FrameLowering code will use this order to determine the layout the
 // callee-save area in the stack frame. As can be observed below, Darwin

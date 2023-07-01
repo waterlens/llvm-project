@@ -1047,6 +1047,9 @@ void TypePrinter::printFunctionAfter(const FunctionType::ExtInfo &Info,
     case CC_M68kRTD:
       OS << " __attribute__((m68k_rtd))";
       break;
+    case CC_QuicKamlCall:
+      OS << " __attribute__((qkcc))";
+      break;
     }
   }
 
@@ -1884,6 +1887,9 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
     break;
   case attr::M68kRTD:
     OS << "m68k_rtd";
+    break;
+  case attr::QuicKamlCall:
+    OS << "qkcc";
     break;
   case attr::NoDeref:
     OS << "noderef";

@@ -2868,6 +2868,11 @@ def M68kRTD: DeclOrTypeAttr {
   let Documentation = [M68kRTDDocs];
 }
 
+def QuicKamlCall : DeclOrTypeAttr {
+  let Spellings = [Clang<"qkcc">];
+  let Documentation = [QuicKamlCallDocs];
+}
+
 def Target : InheritableAttr {
   let Spellings = [GCC<"target">];
   let Args = [StringArgument<"featuresStr">];

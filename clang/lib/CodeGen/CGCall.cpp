@@ -73,6 +73,7 @@ unsigned CodeGenTypes::ClangCallConvToLLVMCallConv(CallingConv CC) {
   case CC_Swift: return llvm::CallingConv::Swift;
   case CC_SwiftAsync: return llvm::CallingConv::SwiftTail;
   case CC_M68kRTD: return llvm::CallingConv::M68k_RTD;
+  case CC_QuicKamlCall: return llvm::CallingConv::QuicKaml;
   }
 }
 
@@ -255,6 +256,9 @@ static CallingConv getCallingConventionForDecl(const ObjCMethodDecl *D,
 
   if (D->hasAttr<M68kRTDAttr>())
     return CC_M68kRTD;
+
+  if (D->hasAttr<QuicKamlCallAttr>())
+    return CC_QuicKamlCall;
 
   return CC_C;
 }
